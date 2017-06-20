@@ -23,7 +23,6 @@
 class NfcAdapter {
     public:
         NfcAdapter(PN532Interface &interface);
-
         ~NfcAdapter(void);
         void begin(boolean verbose=true);
         boolean tagPresent(unsigned long timeout=0); // tagAvailable

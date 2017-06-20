@@ -6,8 +6,7 @@
 
 #define MAX_NDEF_RECORDS 4
 
-class NdefMessage
-{
+class NdefMessage {
     public:
         NdefMessage(void);
         NdefMessage(const byte *data, const int numBytes);
@@ -15,7 +14,7 @@ class NdefMessage
         ~NdefMessage();
         NdefMessage& operator=(const NdefMessage& rhs);
 
-        int getEncodedSize(); // need so we can pass array to encode
+        uint32_t getEncodedSize(); // need so we can pass array to encode
         void encode(byte *data);
 
         boolean addRecord(NdefRecord& record);
@@ -26,14 +25,14 @@ class NdefMessage
         void addUriRecord(String uri);
         void addEmptyRecord();
 
-        unsigned int getRecordCount();
-        NdefRecord getRecord(int index);
+        uint32_t getRecordCount();
+        NdefRecord getRecord(uint32_t index);
         NdefRecord operator[](int index);
 
         void print();
     private:
         NdefRecord _records[MAX_NDEF_RECORDS];
-        unsigned int _recordCount;
+        uint32_t _recordCount;
 };
 
 #endif

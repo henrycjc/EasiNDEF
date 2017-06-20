@@ -6,8 +6,7 @@
 #include <Ndef.h>
 #include <NfcTag.h>
 
-class MifareClassic
-{
+class MifareClassic {
     public:
         MifareClassic(PN532& nfcShield);
         ~MifareClassic();

@@ -48,9 +48,8 @@ boolean NfcAdapter::tagPresent(unsigned long timeout)
     return success;
 }
 
-boolean NfcAdapter::erase()
-{
-    boolean success;
+boolean NfcAdapter::erase() {
+    //boolean success;
     NdefMessage message = NdefMessage();
     message.addEmptyRecord();
     return write(message);
@@ -140,29 +139,22 @@ boolean NfcAdapter::write(NdefMessage& ndefMessage)
     boolean success;
     uint8_t type = guessTagType();
 
-    if (type == TAG_TYPE_MIFARE_CLASSIC)
-    {
+    if (type == TAG_TYPE_MIFARE_CLASSIC) {
         #ifdef NDEF_DEBUG
         Serial.println(F("Writing Mifare Classic"));
         #endif
         MifareClassic mifareClassic = MifareClassic(*shield);
         success = mifareClassic.write(ndefMessage, uid, uidLength);
-    }
-    else if (type == TAG_TYPE_2)
-    {
+    } else if (type == TAG_TYPE_2) {
         #ifdef NDEF_DEBUG
         Serial.println(F("Writing Mifare Ultralight"));
         #endif
         MifareUltralight mifareUltralight = MifareUltralight(*shield);
-        success = mifareUltralight.write(ndefMessage, uid, uidLength);
-    }
-    else if (type == TAG_TYPE_UNKNOWN)
-    {
+        success = mifareUltralight.write(ndefMessage);
+    } else if (type == TAG_TYPE_UNKNOWN) {
         Serial.print(F("Can not determine tag type"));
         success = false;
-    }
-    else
-    {
+    } else{
         Serial.print(F("No driver for card type "));Serial.println(type);
         success = false;
     }

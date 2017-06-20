@@ -4,12 +4,7 @@
 /* NOTE: To use the Ndef library in your code, don't include Ndef.h
    See README.md for details on which files to include in your sketch.
 */
-
 #include <Arduino.h>
-
-#ifndef NULL
-  #define NULL (void *)0
-#endif
 
 void PrintHex(const byte *data, const long numBytes);
 void PrintHexChar(const byte *data, const long numBytes);
