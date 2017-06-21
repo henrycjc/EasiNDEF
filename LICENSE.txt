@@ -1,7 +1,4 @@
-MIT License
 Copyright (C) 2017 Henry Chladil
-
-
 
 Software License Agreement (BSD License)
 
