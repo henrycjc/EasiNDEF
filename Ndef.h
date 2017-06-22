@@ -6,8 +6,8 @@
 */
 #include <Arduino.h>
 
-void PrintHex(const byte *data, const long numBytes);
-void PrintHexChar(const byte *data, const long numBytes);
-void DumpHex(const byte *data, const long numBytes, const int blockSize);
+void PrintHex(const byte* data, const long numBytes);
+void PrintHexChar(const byte* data, const long numBytes);
+void DumpHex(const byte* data, const long numBytes, const int blockSize);
 
 #endif

@@ -3,17 +3,17 @@
 // Borrowed from Adafruit_NFCShield_I2C
 void PrintHex(const byte* data, const long numBytes) {
     for (int32_t szPos = 0; szPos < numBytes; szPos++) {
-        Serial.print("0x");
+        Serial.print(F("0x"));
         // Append leading 0 for small values
         if (data[szPos] <= 0xF) {
-            Serial.print("0");
+            Serial.print(F("0"));
         }
         Serial.print(data[szPos]&0xff, HEX);
         if ((numBytes > 1) && (szPos != numBytes - 1)) {
-            Serial.print(" ");
+            Serial.print(F(" "));
         }
     }
-    Serial.println("");
+    Serial.println();
 }
 
 // Borrowed from Adafruit_NFCShield_I2C
@@ -21,21 +21,21 @@ void PrintHexChar(const byte * data, const long numBytes) {
     for (int32_t szPos = 0; szPos < numBytes; szPos++){
         // Append leading 0 for small values
         if (data[szPos] <= 0xF) {
-            Serial.print("0");
+            Serial.print(F("0"));
         }
         Serial.print(data[szPos], HEX);
         if ((numBytes > 1) && (szPos != (numBytes - 1))) {
-            Serial.print(" ");
+            Serial.print(F(" "));
         }
     }
-    Serial.print("  ");
+    Serial.print(F("  "));
     for (int32_t szPos = 0; szPos < numBytes; szPos++) {
         if (data[szPos] <= 0x1F) {
-           Serial.print("."); 
+           Serial.print(F(".")); 
         } else {
             Serial.print((char)data[szPos]);
         }
-        Serial.println("");
+        Serial.println();
     }
 }
 

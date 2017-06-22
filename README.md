@@ -9,3 +9,10 @@ This fork hopes to address: style & compiler warnings, (the lack of) error check
 ## License
 
 [BSD License](https://github.com/don/Ndef/blob/master/LICENSE.txt) (c) 2013-2014, Don Coleman; 2017 Henry Chladil 
+
+
+#TODO
+
+- Change uidLength from unsigned int to uint8_t 
+- Add proper inspection of uid for determining tag type
+- ???
