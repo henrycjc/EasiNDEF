@@ -18,7 +18,7 @@ MifareUltralight::MifareUltralight(PN532& nfcShield) {
 
 MifareUltralight::~MifareUltralight() { }
 
-NfcTag MifareUltralight::read(byte * uid, unsigned int uidLength) {
+NfcTag MifareUltralight::read(byte* uid, unsigned int uidLength) {
     if (isUnformatted()) {
         Serial.println(F("WARNING: Tag is not formatted."));
         return NfcTag(uid, uidLength, NFC_FORUM_TAG_TYPE_2);
@@ -45,7 +45,7 @@ NfcTag MifareUltralight::read(byte * uid, unsigned int uidLength) {
                 nfc->PrintHexChar(&buffer[index], ULTRALIGHT_PAGE_SIZE);
             #endif
         } else {
-            Serial.print(F("Read failed "));
+            Serial.print(F("[ERROR] Read failed: "));
             Serial.println(page);
             // TODO error handling
             messageLength = 0;
@@ -68,7 +68,7 @@ boolean MifareUltralight::isUnformatted() {
     if (success) {
         return (data[0] == 0xFF && data[1] == 0xFF && data[2] == 0xFF && data[3] == 0xFF);
     } else {
-        Serial.print(F("Error. Failed read page "));
+        Serial.print(F("[ERROR] Read failed: "));
         Serial.println(page);
         return false;
     }
@@ -150,16 +150,16 @@ boolean MifareUltralight::write(NdefMessage& m) {
     ndefStartIndex = messageLength < 0xFF ? 2 : 4;
     calculateBufferSize();
 
-    if(bufferSize>tagCapacity) {
-	    #ifdef MIFARE_ULTRALIGHT_DEBUG
-    	   Serial.print(F("Encoded Message length exceeded tag Capacity "));
+    if (bufferSize > tagCapacity) {
+        #ifdef MIFARE_ULTRALIGHT_DEBUG
+           Serial.print(F("Encoded Message length exceeded tag Capacity "));
            Serial.println(tagCapacity);
-    	#endif
-    	return false;
+        #endif
+        return false;
     }
     uint8_t encoded[bufferSize];
-    uint8_t *  src = encoded;
-    unsigned int position = 0;
+    uint8_t* src = encoded;
+    uint16_t position = 0;
     uint8_t page = ULTRALIGHT_DATA_START_PAGE;
 
     // Set message size. With ultralight should always be less than 0xFF but who knows?
@@ -172,9 +172,9 @@ boolean MifareUltralight::write(NdefMessage& m) {
         encoded[3] = (messageLength & 0xFF);
     }
 
-    m.encode(encoded+ndefStartIndex);
+    m.encode(encoded + ndefStartIndex);
     // this is always at least 1 byte copy because of terminator.
-    memset(encoded+ndefStartIndex+messageLength, 0, bufferSize-ndefStartIndex-messageLength);
+    memset(encoded + ndefStartIndex + messageLength, 0, bufferSize - ndefStartIndex - messageLength);
     encoded[ndefStartIndex+messageLength] = 0xFE; // terminator
 
     #ifdef MIFARE_ULTRALIGHT_DEBUG
@@ -185,19 +185,21 @@ boolean MifareUltralight::write(NdefMessage& m) {
         nfc->PrintHex(encoded, bufferSize);
     #endif
 
-    while (position < bufferSize){ //bufferSize is always times pagesize so no "last chunk" check
+    while (position < bufferSize) { //bufferSize is always times pagesize so no "last chunk" check
         // write page
-        if (!nfc->mifareultralight_WritePage(page, src))
+        if (!nfc->mifareultralight_WritePage(page, src)) {
             return false;
-		#ifdef MIFARE_ULTRALIGHT_DEBUG
+        }
+            
+        #ifdef MIFARE_ULTRALIGHT_DEBUG
             Serial.print(F("Wrote page "));
             Serial.print(page);
             Serial.print(F(" - "));
-    	   nfc->PrintHex(src,ULTRALIGHT_PAGE_SIZE);
-    	#endif
+           nfc->PrintHex(src,ULTRALIGHT_PAGE_SIZE);
+        #endif
         page++;
-        src+=ULTRALIGHT_PAGE_SIZE;
-        position+=ULTRALIGHT_PAGE_SIZE;
+        src += ULTRALIGHT_PAGE_SIZE;
+        position += ULTRALIGHT_PAGE_SIZE;
     }
     return true;
 }
@@ -209,7 +211,7 @@ boolean MifareUltralight::clean() {
     uint8_t pages = (tagCapacity / ULTRALIGHT_PAGE_SIZE) + ULTRALIGHT_DATA_START_PAGE;
     // factory tags have 0xFF, but OTP-CC blocks have already been set so we use 0x00
     uint8_t data[4] = { 0x00, 0x00, 0x00, 0x00 };
-    for (int i = ULTRALIGHT_DATA_START_PAGE; i < pages; i++) {
+    for (int8_t i = ULTRALIGHT_DATA_START_PAGE; i < pages; i++) {
         #ifdef MIFARE_ULTRALIGHT_DEBUG
             Serial.print(F("Wrote page "));
             Serial.print(i);
