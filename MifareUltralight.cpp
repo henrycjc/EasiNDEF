@@ -64,7 +64,7 @@ NfcTag MifareUltralight::read(byte* uid, unsigned int uidLength) {
 boolean MifareUltralight::isUnformatted() {
     uint8_t page = 4;
     byte data[ULTRALIGHT_READ_SIZE];
-    boolean success = nfc->mifareultralight_ReadPage (page, data);
+    boolean success = nfc->mifareultralight_ReadPage(page, data);
     if (success) {
         return (data[0] == 0xFF && data[1] == 0xFF && data[2] == 0xFF && data[3] == 0xFF);
     } else {
@@ -77,7 +77,7 @@ boolean MifareUltralight::isUnformatted() {
 // page 3 has tag capabilities
 void MifareUltralight::readCapabilityContainer() {
     byte data[ULTRALIGHT_PAGE_SIZE];
-    int success = nfc->mifareultralight_ReadPage (3, data);
+    int success = nfc->mifareultralight_ReadPage(3, data);
     if (success) {
         // See AN1303 - different rules for Mifare Family byte2 = (additional data + 48)/8
         tagCapacity = data[2] * 8;

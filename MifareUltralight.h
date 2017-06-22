@@ -5,8 +5,7 @@
 #include <NfcTag.h>
 #include <Ndef.h>
 
-class MifareUltralight
-{
+class MifareUltralight {
     public:
         MifareUltralight(PN532& nfcShield);
         ~MifareUltralight();
