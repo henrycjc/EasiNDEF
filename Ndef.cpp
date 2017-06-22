@@ -8,7 +8,7 @@ void PrintHex(const byte* data, const long numBytes) {
         if (data[szPos] <= 0xF) {
             Serial.print(F("0"));
         }
-        Serial.print(data[szPos]&0xff, HEX);
+        Serial.print(data[szPos] & 0xFF, HEX);
         if ((numBytes > 1) && (szPos != numBytes - 1)) {
             Serial.print(F(" "));
         }

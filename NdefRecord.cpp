@@ -54,21 +54,17 @@ NdefRecord::~NdefRecord() {
 NdefRecord& NdefRecord::operator=(const NdefRecord& rhs) {
     //Serial.println("NdefRecord ASSIGN");
 
-    if (this != &rhs)
-    {
+    if (this != &rhs) {
         // free existing
-        if (_typeLength)
-        {
+        if (_typeLength) {
             free(_type);
         }
 
-        if (_payloadLength)
-        {
+        if (_payloadLength) {
             free(_payload);
         }
 
-        if (_idLength)
-        {
+        if (_idLength) {
             free(_id);
         }
 
@@ -77,20 +73,17 @@ NdefRecord& NdefRecord::operator=(const NdefRecord& rhs) {
         _payloadLength = rhs._payloadLength;
         _idLength = rhs._idLength;
 
-        if (_typeLength)
-        {
+        if (_typeLength) {
             _type = (byte*)malloc(_typeLength);
             memcpy(_type, rhs._type, _typeLength);
         }
 
-        if (_payloadLength)
-        {
+        if (_payloadLength) {
             _payload = (byte*)malloc(_payloadLength);
             memcpy(_payload, rhs._payload, _payloadLength);
         }
 
-        if (_idLength)
-        {
+        if (_idLength) {
             _id = (byte*)malloc(_idLength);
             memcpy(_id, rhs._id, _idLength);
         }
@@ -99,40 +92,28 @@ NdefRecord& NdefRecord::operator=(const NdefRecord& rhs) {
 }
 
 // size of records in bytes
-int NdefRecord::getEncodedSize()
-{
+int NdefRecord::getEncodedSize() {
     int size = 2; // tnf + typeLength
-    if (_payloadLength > 0xFF)
-    {
+    if (_payloadLength > 0xFF) {
         size += 4;
-    }
-    else
-    {
+    } else {
         size += 1;
     }
-
-    if (_idLength)
-    {
+    if (_idLength) {
         size += 1;
     }
-
     size += (_typeLength + _payloadLength + _idLength);
-
     return size;
 }
 
-void NdefRecord::encode(byte *data, bool firstRecord, bool lastRecord)
-{
+void NdefRecord::encode(byte *data, bool firstRecord, bool lastRecord) {
     // assert data > getEncodedSize()
 
     uint8_t* data_ptr = &data[0];
-
     *data_ptr = getTnfByte(firstRecord, lastRecord);
     data_ptr += 1;
-
     *data_ptr = _typeLength;
     data_ptr += 1;
-
     if (_payloadLength <= 0xFF) {  // short record
         *data_ptr = _payloadLength;
         data_ptr += 1;
@@ -144,29 +125,22 @@ void NdefRecord::encode(byte *data, bool firstRecord, bool lastRecord)
         data_ptr[3] = _payloadLength & 0xFF;
         data_ptr += 4;
     }
-
-    if (_idLength)
-    {
+    if (_idLength) {
         *data_ptr = _idLength;
         data_ptr += 1;
     }
-
     //Serial.println(2);
     memcpy(data_ptr, _type, _typeLength);
     data_ptr += _typeLength;
-
-    if (_idLength)
-    {
+    if (_idLength) {
         memcpy(data_ptr, _id, _idLength);
         data_ptr += _idLength;
     }
-    
     memcpy(data_ptr, _payload, _payloadLength);
     data_ptr += _payloadLength;
 }
 
-byte NdefRecord::getTnfByte(bool firstRecord, bool lastRecord)
-{
+byte NdefRecord::getTnfByte(bool firstRecord, bool lastRecord){
     int value = _tnf;
 
     if (firstRecord) { // mb

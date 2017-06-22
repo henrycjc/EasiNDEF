@@ -1,12 +1,10 @@
 #include <NdefMessage.h>
 
-NdefMessage::NdefMessage(void)
-{
+NdefMessage::NdefMessage(void) {
     _recordCount = 0;
 }
 
-NdefMessage::NdefMessage(const byte* data, const int numBytes)
-{
+NdefMessage::NdefMessage(const byte* data, const int numBytes) {
     #ifdef NDEF_DEBUG
         Serial.print(F("Decoding "));
         Serial.print(numBytes);
@@ -17,20 +15,17 @@ NdefMessage::NdefMessage(const byte* data, const int numBytes)
     _recordCount = 0;
     int32_t index = 0;
     while (index <= numBytes) {
-
         // decode tnf - first byte is tnf with bit flags
         // see the NFDEF spec for more info
         byte tnf_byte = data[index];
         //bool mb = (tnf_byte & 0x80) != 0;
-        bool me = (tnf_byte & 0x40) != 0;
+        boolean me = (tnf_byte & 0x40) != 0;
         //bool cf = (tnf_byte & 0x20) != 0;
-        bool sr = (tnf_byte & 0x10) != 0;
-        bool il = (tnf_byte & 0x8) != 0;
+        boolean sr = (tnf_byte & 0x10) != 0;
+        boolean il = (tnf_byte & 0x8) != 0;
         byte tnf = (tnf_byte & 0x7);
-
         NdefRecord record = NdefRecord();
         record.setTnf(tnf);
-
         index++;
         int typeLength = data[index];
         int payloadLength = 0;
@@ -63,7 +58,6 @@ NdefMessage::NdefMessage(const byte* data, const int numBytes)
             break; // last message
         }
     }
-
 }
 
 NdefMessage::NdefMessage(const NdefMessage& rhs) {
@@ -112,41 +106,32 @@ void NdefMessage::encode(uint8_t* data) {
     }
 }
 
-boolean NdefMessage::addRecord(NdefRecord& record)
-{
+boolean NdefMessage::addRecord(NdefRecord& record) {
 
-    if (_recordCount < MAX_NDEF_RECORDS)
-    {
+    if (_recordCount < MAX_NDEF_RECORDS) {
         _records[_recordCount] = record;
         _recordCount++;
         return true;
-    }
-    else
-    {
-        Serial.println(F("WARNING: Too many records. Increase MAX_NDEF_RECORDS."));
+    } else {
+        Serial.println(F("[ERROR] Too many records. Increase MAX_NDEF_RECORDS to fix this"));
         return false;
     }
 }
 
-void NdefMessage::addMimeMediaRecord(String mimeType, String payload)
-{
-
+void NdefMessage::addMimeMediaRecord(String mimeType, String payload) {
     byte payloadBytes[payload.length() + 1];
     payload.getBytes(payloadBytes, sizeof(payloadBytes));
-
     addMimeMediaRecord(mimeType, payloadBytes, payload.length());
 }
 
 void NdefMessage::addMimeMediaRecord(String mimeType, uint8_t* payload, int payloadLength) {
+
     NdefRecord r = NdefRecord();
     r.setTnf(TNF_MIME_MEDIA);
-
     byte type[mimeType.length() + 1];
     mimeType.getBytes(type, sizeof(type));
     r.setType(type, mimeType.length());
-
     r.setPayload(payload, payloadLength);
-
     addRecord(r);
 }
 
@@ -157,7 +142,8 @@ void NdefMessage::addTextRecord(String text){
 void NdefMessage::addTextRecord(String text, String encoding) {
     NdefRecord r = NdefRecord();
     r.setTnf(TNF_WELL_KNOWN);
-    uint8_t RTD_TEXT[1] = { 0x54 }; // TODO this should be a constant or preprocessor
+    // TODO this should be a constant or preprocessor
+    uint8_t RTD_TEXT[1] = {0x54}; 
     r.setType(RTD_TEXT, sizeof(RTD_TEXT));
     // X is a placeholder for encoding length
     // TODO is it more efficient to build w/o string concatenation?
@@ -170,25 +156,19 @@ void NdefMessage::addTextRecord(String text, String encoding) {
     addRecord(r);
 }
 
-void NdefMessage::addUriRecord(String uri)
-{
+void NdefMessage::addUriRecord(String uri) {
     NdefRecord* r = new NdefRecord();
     r->setTnf(TNF_WELL_KNOWN);
-
-    uint8_t RTD_URI[1] = { 0x55 }; // TODO this should be a constant or preprocessor
+    // TODO this should be a constant or preprocessor
+    uint8_t RTD_URI[1] = {0x55}; 
     r->setType(RTD_URI, sizeof(RTD_URI));
-
     // X is a placeholder for identifier code
     String payloadString = "X" + uri;
-
     byte payload[payloadString.length() + 1];
     payloadString.getBytes(payload, sizeof(payload));
-
     // add identifier code 0x0, meaning no prefix substitution
     payload[0] = 0x0;
-
     r->setPayload(payload, payloadString.length());
-
     addRecord(*r);
     delete(r);
 }
