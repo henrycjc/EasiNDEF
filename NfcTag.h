@@ -5,7 +5,7 @@
 #include <Arduino.h>
 #include <NdefMessage.h>
 
-class NfcTag{
+class NfcTag {
     public:
         NfcTag();
         NfcTag(byte* uid, uint32_t uidLength);
@@ -15,7 +15,7 @@ class NfcTag{
         ~NfcTag(void);
         NfcTag& operator=(const NfcTag& rhs);
         uint8_t getUidLength();
-        void getUid(byte *uid, uint32_t uidLength);
+        void getUid(byte* uid, uint32_t uidLength);
         String getUidString();
         String getTagType();
         boolean hasNdefMessage();

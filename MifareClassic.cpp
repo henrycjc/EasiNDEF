@@ -285,7 +285,7 @@ boolean MifareClassic::write(NdefMessage& m, byte* uid, unsigned int uidLength) 
         Serial.print(F("sizeof(encoded) "));
         Serial.println(sizeof(encoded));
         Serial.print(F("sizeof(buffer) "));
-        erial.println(sizeof(buffer));
+        Serial.println(sizeof(buffer));
     #endif
 
     if (sizeof(encoded) < 0xFF) {

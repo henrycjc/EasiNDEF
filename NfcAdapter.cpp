@@ -8,13 +8,14 @@ NfcAdapter::~NfcAdapter(void) {
     delete shield;
 }
 
-void NfcAdapter::begin(boolean verbose) {
+boolean NfcAdapter::begin(boolean verbose) {
     shield->begin();
 
     uint32_t versiondata = shield->getFirmwareVersion();
     if (!versiondata) {
-        Serial.print(F("[ERROR] Failed to find PN53x board. Halting"));
-        while (1); // halt
+        Serial.println(F("[ERROR] Failed to find PN53x board. Halting."));
+        //while (1); // halt
+        return false;
     }
     if (verbose) {
         Serial.print(F("Found chip PN5"));
@@ -26,6 +27,7 @@ void NfcAdapter::begin(boolean verbose) {
     }
     // configure board to read RFID tags
     shield->SAMConfig();
+    return true;
 }
 
 boolean NfcAdapter::tagPresent(unsigned long timeout) {
@@ -53,7 +55,7 @@ boolean NfcAdapter::format() {
         MifareClassic mifareClassic = MifareClassic(*shield);
         success = mifareClassic.formatNDEF(uid, uidLength);
     } else {
-        Serial.print(F("[ERROR] Unsupported tag"));
+        Serial.println(F("[ERROR] Unsupported tag"));
         success = false;
     }
     return success;
@@ -76,7 +78,7 @@ boolean NfcAdapter::clean()
         MifareUltralight ultralight = MifareUltralight(*shield);
         return ultralight.clean();
     } else {
-        Serial.print(F("[ERROR] Unsupported tag type"));
+        Serial.print(F("[ERROR] Unsupported tag type: "));
         Serial.println(type);
         return false;
     }
@@ -99,10 +101,10 @@ NfcTag NfcAdapter::read() {
         MifareUltralight ultralight = MifareUltralight(*shield);
         return ultralight.read(uid, uidLength);
     } else if (type == TAG_TYPE_UNKNOWN) {
-        Serial.print(F("[ERROR] Unsupported tag type (unknown)"));
+        Serial.println(F("[ERROR] Unsupported tag type (unknown)"));
         return NfcTag(uid, uidLength);
     } else {
-        Serial.print(F("[ERROR] Unsupported tag type"));
+        Serial.print(F("[ERROR] Unsupported tag type: "));
         Serial.println(type);
         // TODO should set type here
         return NfcTag(uid, uidLength);
@@ -127,10 +129,10 @@ boolean NfcAdapter::write(NdefMessage& ndefMessage) {
         MifareUltralight mifareUltralight = MifareUltralight(*shield);
         success = mifareUltralight.write(ndefMessage);
     } else if (type == TAG_TYPE_UNKNOWN) {
-        Serial.print(F("[ERROR] Unsupported tag type (unknown)"));
+        Serial.println(F("[ERROR] Unsupported tag type (unknown)"));
         success = false;
     } else{
-        Serial.print(F("[ERROR] Unsupported tag type"));
+        Serial.print(F("[ERROR] Unsupported tag type: "));
         Serial.println(type);
         success = false;
     }
